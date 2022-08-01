@@ -109,7 +109,7 @@ def write_metaphlan_like_report(file_name, report_file):
                     i = 0
                     if len(splitted_taxon) > 1:
                         i = 1
-                    _taxid_name = [splitted_taxon[i].split("__")[1]]
+                    _taxid_name = [splitted_taxon[i].split("__")[1].replace('~~', ',')]
                     taxid = list(ncbi.get_name_translator(_taxid_name).values())
                     _line = (
                         f"{k_}\t{taxid[0][0]}\t{i_}\t{''}\n")
@@ -178,7 +178,7 @@ def print_metaphlan_like_report(taxid):
 
     for taxon in taxonomy_rank_dict.keys():
         if taxon in rank.keys():
-            _value = f"{taxonomy_rank_dict[taxon]}{lineage_name[rank[taxon]]}"
+            _value = f"{taxonomy_rank_dict[taxon]}{lineage_name[rank[taxon]].replace(',','~~')}"
             # logger.info(f"{taxon} - {lineage_name[rank[taxon]]}")
             # logger.info(f"{taxon}-{_value}")
             if taxon == "kingdom" and _value != "Fungi":
