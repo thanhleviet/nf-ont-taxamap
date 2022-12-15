@@ -192,8 +192,9 @@ def print_metaphlan_like_report(taxid):
 @click.command()
 @click.argument('paf_file')
 @click.option('--output', '-o', help="Output name", required=True)
+@click.option('--min_read_length', '-l', help="Min read length", default=100)
 @click.option('--score', '-c', help="Score threshold to exclude false positive classification [score = 2*(coverage*identity)/(coverage+identity)*100]", default=35.0)
-def main(score, paf_file, output=None):
+def main(min_read_length, score, paf_file, output=None):
     """
     Parsing a paf file into a readable taxonomy ID format \n
     thanh.le-viet@quadram.ac.uk
@@ -205,7 +206,7 @@ def main(score, paf_file, output=None):
             taxid_sum_dict = {}
             for _index, line in enumerate(paf):
                 aln = Alignment(line)
-                if aln.score >= score:
+                if aln.score >= score and int(aln.query_length) >= min_read_length:
                     if aln.query_name not in collection.keys():
                         collection[aln.query_name] = {"taxid": aln.taxid,
                                                     "read_length": aln.query_length,
