@@ -22,6 +22,23 @@ process DEHUMAN {
     """
 }
 
+process FILTER_BY_LENGTH {
+    
+    tag {sample_id}
+    
+    cpus 4
+
+    input:
+    tuple val(sample_id), path(reads)
+    output:
+    tuple val(sample_id), path("${sample_id}.filtered.${params.min_read_length}.fastq.gz")
+
+    script:
+    """
+    seqkit -j $task.cpus seq -m ${params.min_read_length} ${reads} | pigz - > ${sample_id}.filtered.${params.min_read_length}.fastq.gz
+    """
+}
+
 process DEHUMAN2 {
     publishDir "${params.outdir}/${task.process.replaceAll(":","_")}", mode: "copy"
     
@@ -198,7 +215,8 @@ workflow wf_MINIMAP2_SAM {
 }
 
 workflow {
-    DEHUMAN2(ch_reads)
+    FILTER_BY_LENGTH(ch_reads)
+    DEHUMAN2(FILTER_BY_LENGTH.out)
     ch_dehuman_reads = DEHUMAN2.out.fastq
     if (!params.skip_amr) {
         AMR(ch_dehuman_reads)
