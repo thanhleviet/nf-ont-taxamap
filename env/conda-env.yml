@@ -1,0 +1,14 @@
+name: ont_taxonomy
+channels:
+  - conda-forge
+  - bioconda
+  - default
+dependencies:
+  - bioconda::minimap2=2.24
+  - bioconda::seqkit
+  - bioconda::samtools>=1.10
+  - bioconda::nanoq
+  - bioconda::kma>=1.4
+  - bioconda::csvtk
+  - conda-forge::pigz>=2.5
+  - epi2melabs::fastcat
