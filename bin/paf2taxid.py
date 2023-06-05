@@ -29,12 +29,15 @@ class Alignment(object):
         self._parse_line()
 
     def _parse_line(self):
+        # Split the PAF line into columns
         cols = self.line.decode().strip().split("\t")
         if len(cols) >= 12:
+            # Assign values to the object's attributes based on the PAF line columns
             self.query_name, self.query_length, self.query_start, self.query_end, _, self.ref_name, self.ref_length, self.ref_start, self.ref_end, self.matched_mapping_bases, self.total_mapping_bases = cols[:11]
             self.aligned_query_length = int(self.query_end) - int(self.query_start)
             self.ref_name = self.ref_name.replace("kraken:taxid|", "")
             
+            # Calculate various coverage and identity metrics
             self.aligned_coverage = int(self.matched_mapping_bases) / int(self.query_length)* 100
             self.aligned_coverage = round(self.aligned_coverage, 2)
 
@@ -47,6 +50,7 @@ class Alignment(object):
             self.score = 2*((self.aligned_coverage * self.aligned_identity)/(self.aligned_coverage + self.aligned_identity))
             self.score = round(self.score, 2)
 
+            # Extract the taxid and reference accession from the ref_name attribute
             self.taxid, self.ref_accession = self.ref_name.split("|")
         else:
             logger.error(f"Incorrect line: {cols}")
@@ -55,7 +59,9 @@ class Alignment(object):
 def write_taxonomy_read(file_name, collection):
     try:
         with open(file_name, 'w') as _fh:
+            # Write header to file
             _fh.write("read,taxid,read_length,closet_reference,read_coverage,alignment_coverage,alignment_identity,score\n")
+            # Write each read's taxonomy information to file
             for k, v in collection.items():
                 _fh.write(
                     f"{k},{collection[k]['taxid']},{collection[k]['read_length']},{collection[k]['ref_accession']},{collection[k]['read_coverage']},{collection[k]['aligned_coverage']},{collection[k]['identity']},{collection[k]['score']}\n")
@@ -67,8 +73,10 @@ def write_taxonomy_read(file_name, collection):
 def write_taxonomy_report(file_name, collection):
     try:
         with open(file_name, 'w') as _fh:
+            # Write header to file
             _fh.write(
                 "taxid,count,kingdom,phylum,class,order,family,genus,species,strain\n")
+            # Write each taxonomic rank's count to file
             for line in collection:
                 _fh.write(f"{line}\n")
     except IOError as e:
@@ -95,12 +103,15 @@ def write_metaphlan_like_report(file_name, report_file):
         _output = []
         for rank in taxonomy:
             _list.append(rank)
+            # Group the report by taxonomic rank and sum the counts
             _agg = report.groupby(_list)['count'].agg('sum').reset_index()
             df_to_list = _agg.values.tolist()
             _output.append(df_to_list)
         with open(file_name, 'w') as _fh:
+            # Write header to file
             _fh.write("#mpa_v3\n")
             _fh.write("#clade_name\tNCBI_tax_id\trelative_abundance\tadditional_species\n")
+            # Write each taxonomic rank's information to file
             for x in _output:
                 for k in x:
                     k_ = "|".join([m for m in k if isinstance(m, str)])
