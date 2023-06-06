@@ -61,7 +61,7 @@
         },
         "skip_sam": {
             "type": "boolean",
-            "default": "false"
+            "default": "true"
         },
         "skip_amr": {
             "type": "boolean",

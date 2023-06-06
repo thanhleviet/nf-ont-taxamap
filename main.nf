@@ -11,9 +11,9 @@ if (params.help) {
 }
 
 process CONCATENATE {
-    
+
     tag {sample_id}
-    
+
     conda './env/conda-env.yml'
     // conda 'epi2melabs::fastcat'
 
@@ -29,7 +29,7 @@ process CONCATENATE {
     """
     fastcat ${barcode_path} | pigz -p ${task.cpus} - >  ${sample_id}.fastq.gz
     """
-    
+
     stub:
     """
     fastcat --help
@@ -38,9 +38,9 @@ process CONCATENATE {
 }
 
 process DEHUMAN {
-    
+
     tag {sample_id}
-    
+
     conda './env/conda-env.yml'
 
     cpus 32
@@ -65,7 +65,7 @@ process DEHUMAN {
 }
 
 process FILTER_BY_LENGTH {
-    
+
     tag {sample_id}
     conda './env/conda-env.yml'
 
@@ -88,12 +88,12 @@ process FILTER_BY_LENGTH {
     seqkit -h
     touch ${sample_id}.filtered.${params.min_read_length}.fastq.gz
     touch ${sample_id}.stats.pre_filtered.json
-    touch ${sample_id}.stats.post_filtered.json 
+    touch ${sample_id}.stats.post_filtered.json
     """
 }
 
 process DEHUMAN2 {
-    
+
     tag {sample_id}
     conda './env/conda-env.yml'
 
@@ -124,17 +124,17 @@ process DEHUMAN2 {
 }
 
 process MINIMAP2_PAF {
-    
+
     tag {sample_id}
-    
+
     conda './env/conda-env.yml'
 
     cpus 32
 
     memory '64.GB'
-    
+
     // maxForks 2
-    
+
     input:
         tuple val(sample_id), path(reads)
 
@@ -154,17 +154,17 @@ process MINIMAP2_PAF {
 }
 
 process AMR {
-    
+
     tag {sample_id}
-    
+
     conda './env/conda-env.yml'
 
     cpus 32
 
     memory '64.GB'
-    
+
     // maxForks 2
-    
+
     input:
         tuple val(sample_id), path(reads)
 
@@ -184,15 +184,15 @@ process AMR {
 
 
 process MINIMAP2_SAM {
-    
+
     tag {sample_id}
-    
+
     cpus 32
 
     memory '64.GB'
-    
+
     // maxForks 2
-    
+
     input:
         tuple val(sample_id), path(reads)
 
@@ -211,16 +211,16 @@ process MINIMAP2_SAM {
 }
 
 process CLEAN_PAF {
-    
+
     tag {sample_id}
-    
+
     cpus 4
 
     input:
         tuple val(sample_id), path(paf)
     output:
         path("${sample_id}.cleaned.paf.gz")
-    
+
     shell:
     '''
         zcat !{sample_id}.paf.gz | awk 'OFS="," {print $1,$2,$3,$4,$6,$7,$8,$9,$10,$11,$12,$15,$17}' | sed 's/kraken:taxid|//g' | csvtk -H mutate2 -n cov -e '($4-$3)/$2*100' | csvtk -H mutate2 -n iden -e '$9/$10*100' | csvtk -H mutate2 -n score -e '2*(($14*$15)/($14+$15)*100)'| pigz - >  !{sample_id}.cleaned.paf.gz
@@ -233,9 +233,9 @@ process CLEAN_PAF {
 }
 
 process SAM2LCA {
-    
+
     tag {sample_id}
-    
+
     cpus 12
 
     input:
@@ -256,11 +256,11 @@ process SAM2LCA {
 
 process PARSING_PAF {
     publishDir "${params.outdir}", mode: "copy"
-    
+
     tag {sample_id}
-    
+
     conda './env/conda-report.yml'
-    
+
     cpus 4
 
     input:
@@ -318,9 +318,9 @@ workflow {
     } else {
         ch_reads = ch_input
     }
-    
+
     FILTER_BY_LENGTH(ch_reads)
-    
+
     if (!params.skip_dehuman) {
         DEHUMAN2(FILTER_BY_LENGTH.out.reads)
         ch_dehuman_reads = DEHUMAN2.out.fastq
