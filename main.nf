@@ -133,7 +133,6 @@ process MINIMAP2_PAF {
 
     memory '64.GB'
 
-    // maxForks 2
 
     input:
         tuple val(sample_id), path(reads)

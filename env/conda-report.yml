@@ -5,4 +5,9 @@ channels:
   - default
 dependencies:
   - conda-forge::python=3.6
-  - bioconda::ete3
+  - pip
+  - pip:
+    - ete3
+    - pandas
+    - click
+    - loguru
