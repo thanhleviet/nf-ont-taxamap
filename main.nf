@@ -335,11 +335,15 @@ workflow wf_MINIMAP2_SAM {
         SAM2LCA(MINIMAP2_SAM.out)
 }
 
+// Scans the folder specified in the `params.input` parameter and retrieves the type and pattern of the files in the folder
 def folderContents = scanFolder(params.input)
 def input_type = folderContents[0][0]
 def pattern = folderContents[0][1]
+
+// Creates a channel `ch_input` from the files in the folder that match the pattern,
+// and maps each file to a tuple containing its simple name and its full path
 ch_input = Channel.fromPath("${params.input}/${pattern}", type: input_type)
-                    .map {it -> tuple(it.simpleName, it)}
+                .map {it -> tuple(it.simpleName, it)}
 
 
 workflow {
