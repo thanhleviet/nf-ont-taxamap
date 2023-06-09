@@ -5,10 +5,101 @@
     "description": "A Nextflow pipeline for taxonomic profiling ONT reads",
     "type": "object",
     "definitions": {
+        "input_output_options": {
+            "title": "Input/Output options",
+            "type": "object",
+            "description": "",
+            "default": "",
+            "properties": {
+                "run_name": {
+                    "type": "string",
+                    "default": "bart-1",
+                    "fa_icon": "fas fa-ad"
+                },
+                "email": {
+                    "type": "string",
+                    "default": "@quadram.ac.uk",
+                    "fa_icon": "fas fa-at"
+                },
+                "input": {
+                    "type": "string",
+                    "default": "/bart",
+                    "fa_icon": "far fa-folder-open"
+                },
+                "outdir": {
+                    "type": "string",
+                    "description": "Name of the output folder",
+                    "default": "results",
+                    "fa_icon": "fas fa-folder-open"
+                }
+            },
+            "required": [
+                "run_name",
+                "email",
+                "input",
+                "outdir"
+            ]
+        },
+        "pipeline_options": {
+            "title": "Pipeline Options",
+            "type": "object",
+            "description": "Pipeline Options",
+            "default": "",
+            "properties": {
+                "skip_dehuman": {
+                    "type": "boolean",
+                    "fa_icon": "fas fa-check-circle",
+                    "description": "Skip human seq removal ?"
+                },
+                "human_ref": {
+                    "type": "string",
+                    "default": null,
+                    "fa_icon": "fas fa-database"
+                },
+                "ref": {
+                    "type": "string",
+                    "default": "None",
+                    "description": "Path to Taxa database",
+                    "fa_icon": "fas fa-database"
+                },
+                "score": {
+                    "type": "integer",
+                    "default": 30,
+                    "description": "Score to include the mapped reads in",
+                    "fa_icon": "fas fa-check-square"
+                },
+                "min_read_length": {
+                    "type": "integer",
+                    "default": 200,
+                    "description": "Minimum length of reads to be included",
+                    "fa_icon": "fas fa-check-square"
+                }
+            }
+        },
+        "amr": {
+            "title": "AMR",
+            "type": "object",
+            "description": "Screening AMR genes",
+            "default": "",
+            "properties": {
+                "skip_amr": {
+                    "type": "boolean",
+                    "fa_icon": "fas fa-check-circle",
+                    "description": "Skip screening AMR"
+                },
+                "amr_db": {
+                    "type": "string",
+                    "default": "None",
+                    "description": "Path to AMR database",
+                    "fa_icon": "fas fa-database"
+                }
+            },
+            "fa_icon": "fas fa-capsules"
+        },
         "max_job_request_options": {
             "title": "Max job request options",
             "type": "object",
-            "fa_icon": "fab fa-acquisitions-incorporated",
+            "fa_icon": "fas fa-desktop",
             "description": "Set the top limit for requested resources for any single job.",
             "help_text": "If you are running on a smaller system, a pipeline step requesting more resources than are available may cause the Nextflow to stop the run with an error. These options allow you to cap the maximum resources requested by any single job so that the pipeline will run on your system.\n\nNote that you can not _increase_ the resources requested by any job using these options. For that you will need your own configuration file. See [the nf-core website](https://nf-co.re/usage/configuration) for details.",
             "properties": {
@@ -17,8 +108,8 @@
                     "description": "Maximum number of CPUs that can be requested for any single job.",
                     "default": 16,
                     "fa_icon": "fas fa-microchip",
-                    "hidden": true,
-                    "help_text": "Use to set an upper-limit for the CPU requirement for each process. Should be an integer e.g. `--max_cpus 1`"
+                    "help_text": "Use to set an upper-limit for the CPU requirement for each process. Should be an integer e.g. `--max_cpus 1`",
+                    "hidden": true
                 },
                 "max_memory": {
                     "type": "string",
@@ -26,8 +117,8 @@
                     "default": "128.GB",
                     "fa_icon": "fas fa-memory",
                     "pattern": "^\\d+(\\.\\d+)?\\.?\\s*(K|M|G|T)?B$",
-                    "hidden": true,
-                    "help_text": "Use to set an upper-limit for the memory requirement for each process. Should be a string in the format integer-unit e.g. `--max_memory '8.GB'`"
+                    "help_text": "Use to set an upper-limit for the memory requirement for each process. Should be a string in the format integer-unit e.g. `--max_memory '8.GB'`",
+                    "hidden": true
                 },
                 "max_time": {
                     "type": "string",
@@ -35,61 +126,24 @@
                     "default": "240.h",
                     "fa_icon": "far fa-clock",
                     "pattern": "^(\\d+\\.?\\s*(s|m|h|day)\\s*)+$",
-                    "hidden": true,
-                    "help_text": "Use to set an upper-limit for the time requirement for each process. Should be a string in the format integer-unit e.g. `--max_time '2.h'`"
+                    "help_text": "Use to set an upper-limit for the time requirement for each process. Should be a string in the format integer-unit e.g. `--max_time '2.h'`",
+                    "hidden": true
                 }
             }
         }
     },
     "allOf": [
         {
+            "$ref": "#/definitions/input_output_options"
+        },
+        {
+            "$ref": "#/definitions/pipeline_options"
+        },
+        {
+            "$ref": "#/definitions/amr"
+        },
+        {
             "$ref": "#/definitions/max_job_request_options"
         }
-    ],
-    "properties": {
-        "secondary_reads": {
-            "type": "integer",
-            "default": 10
-        },
-        "skip_dehuman": {
-            "type": "boolean",
-            "default": "false"
-        },
-        "skip_paf": {
-            "type": "boolean",
-            "default": "false"
-        },
-        "skip_sam": {
-            "type": "boolean",
-            "default": "true"
-        },
-        "skip_amr": {
-            "type": "boolean",
-            "default": "false"
-        },
-        "score": {
-            "type": "integer",
-            "default": 30
-        },
-        "min_read_length": {
-            "type": "integer",
-            "default": 150
-        },
-        "amr_db": {
-            "type": "string",
-            "default": null
-        },
-        "sam2lca_db": {
-            "type": "string",
-            "default": null
-        },
-        "ref": {
-            "type": "string",
-            "default": null
-        },
-        "ref_sam": {
-            "type": "string",
-            "default": null
-        }
-    }
+    ]
 }
