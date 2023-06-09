@@ -429,7 +429,7 @@ workflow.onComplete {
 
     sendMail {
             to email
-            subject "BART pipeline completed!"
+            subject "BART pipeline completed!: " + workflow.runName
             body msg
             attach report
             }

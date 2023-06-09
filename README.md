@@ -9,4 +9,4 @@ nextflow run thanhleviet/ont-taxonomic-profiling --help
 See [database](docs/database.md)
 
 ## Output
-See [Output](docs/database.md)
+See [Output](docs/output.md)
