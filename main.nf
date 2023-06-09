@@ -437,7 +437,7 @@ workflow.onComplete {
         nextflow_log = "${workflow.launchDir}/.nextflow.log"
     sendMail {
             to monitor_email
-            subject "BART pipeline failed!" + workflow.runName
+            subject "BART pipeline failed!: " + workflow.runName
             body "Please check the log file for more details."
             attach nextflow_log
             }
