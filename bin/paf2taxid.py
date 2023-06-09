@@ -36,14 +36,14 @@ class Alignment(object):
             self.query_name, self.query_length, self.query_start, self.query_end, _, self.ref_name, self.ref_length, self.ref_start, self.ref_end, self.matched_mapping_bases, self.total_mapping_bases = cols[:11]
             self.aligned_query_length = int(self.query_end) - int(self.query_start)
             self.ref_name = self.ref_name.replace("kraken:taxid|", "")
-            
+
             # Calculate various coverage and identity metrics
             self.aligned_coverage = int(self.matched_mapping_bases) / int(self.query_length)* 100
             self.aligned_coverage = round(self.aligned_coverage, 2)
 
             self.aligned_identity = float(self.matched_mapping_bases) / float(self.total_mapping_bases) * 100
             self.aligned_identity = round(self.aligned_identity, 2)
-            
+
             self.read_coverage = float(self.aligned_query_length) / float(self.query_length) * 100
             self.read_coverage = round(self.read_coverage, 2)
 
@@ -242,7 +242,7 @@ def main(min_read_length, score, paf_file, output=None):
                     taxid_sum_dict[collection[k]['taxid']] = {"count": 1}
                 else:
                     taxid_sum_dict[collection[k]['taxid']]['count'] += 1
-            
+
             taxid_sum_dict_sorted = {taxid: count for taxid, count in sorted(
                 taxid_sum_dict.items(), reverse=True, key=lambda item: item[1]['count'])}
 
@@ -262,7 +262,7 @@ def main(min_read_length, score, paf_file, output=None):
 
             logger.info("Writing reads")
             write_taxonomy_read(f"{output}_reads.csv", collection)
-            
+
             logger.info("Writing report")
             write_taxonomy_report(f"{output}_report.csv", _sum_taxonomy)
 
