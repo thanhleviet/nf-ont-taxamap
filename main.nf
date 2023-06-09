@@ -1,7 +1,11 @@
 #!/usr/bin/env nextflow
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.nio.file.attribute.BasicFileAttributes
+
 include { paramsHelp } from 'plugin/nf-validation'
 include { paramsSummaryLog } from 'plugin/nf-validation'
-include { scanFolder } from './lib/utils.nf'
+include { scanFolder; getMostRecentXlsxFile } from './lib/utils.nf'
 
 log.info paramsSummaryLog(workflow)
 
@@ -15,7 +19,6 @@ process CONCATENATE {
     tag {sample_id}
 
     conda './env/conda-env.yml'
-    // conda 'epi2melabs::fastcat'
 
     cpus 4
 
@@ -297,7 +300,7 @@ process CREATE_EXCEL_REPORT {
     _this_run = new java.util.Date().format('yyyy-MM-dd_HH')
     // Sets the variable `run_name` to either the value of the `params.run_name` parameter,
     // or to the formatted date string if `params.run_name` is null or undefined
-    run_name = params.run_name ?: _this_run
+    run_name = params.run_name ?: workflow.runName
     """
         Rscript --vanilla ${projectDir}/bin/create_excel_report.R \$PWD "report_${run_name}"
     """
@@ -401,4 +404,42 @@ workflow {
     // Collects all items from the channel `ch_report` and returns them as a list
     ch_report = ch_report.collect()
     CREATE_EXCEL_REPORT(ch_report)
+}
+
+workflow.onComplete {
+    report = getMostRecentXlsxFile(params.outdir.toString())
+    monitor_email = "thanh.le-viet@quadram.ac.uk"
+    if (params.email) {
+        email = params.email + "," + monitor_email
+    } else {
+        email = monitor_email
+    }
+
+    if (workflow.success) {
+        def msg = """\
+        Pipeline execution summary
+        ---------------------------
+        Run Name    : ${workflow.runName}
+        Completed at: ${workflow.complete}
+        Duration    : ${workflow.duration}
+        Success     : ${workflow.success}
+        exit status : ${workflow.exitStatus}
+        """
+        .stripIndent()
+
+    sendMail {
+            to email
+            subject "BART pipeline completed!"
+            body msg
+            attach report
+            }
+    } else {
+        nextflow_log = "${workflow.launchDir}/.nextflow.log"
+    sendMail {
+            to monitor_email
+            subject "BART pipeline failed!" + workflow.runName
+            body "Please check the log file for more details."
+            attach nextflow_log
+            }
+    }
 }

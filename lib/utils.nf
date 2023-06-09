@@ -1,3 +1,7 @@
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.nio.file.attribute.BasicFileAttributes
+
 /**
  * Scans a folder for files and folders matching specific patterns and returns a list of tuples.
  * Each tuple contains two elements: a string and a boolean value.
@@ -34,4 +38,27 @@ def scanFolder(folderPath) {
         results << ["none", false]
     }
     return results
+}
+
+/**
+ * Returns the full path to the most recent file with the .xlsx extension in the specified folder.
+ *
+ * @param folderPath The path to the folder to search for .xlsx files.
+ * @return The full path to the most recent .xlsx file in the folder.
+ * @throws IOException If an I/O error occurs while reading the file attributes.
+ */
+def getMostRecentXlsxFile(String folderPath) throws IOException {
+    // Get a list of all .xlsx files in the folder
+    def xlsxFiles = Files.list(Paths.get(folderPath))
+                          .filter { it.toString().endsWith(".xlsx") }
+                          .map { file ->
+                              // Get the file attributes, including the last modified time
+                              def attrs = Files.readAttributes(file, BasicFileAttributes.class)
+                              [file: file, modifiedTime: attrs.lastModifiedTime()]
+                          }
+                          // Sort the files by last modified time in descending order
+                          .sorted { a, b -> b.modifiedTime.compareTo(a.modifiedTime) }
+                          .collect { it.file }
+    // Return the path to the most recent file
+    return xlsxFiles[0].toString()
 }
