@@ -10,7 +10,7 @@ include { scanFolder; getMostRecentXlsxFile } from './lib/utils.nf'
 log.info paramsSummaryLog(workflow)
 
 if (params.help) {
-    log.info paramsHelp("nextflow run thanhleviet/ont-meta-minimap2 --input /path/to/a/folder/of/barcodes")
+    log.info paramsHelp("nextflow run thanhleviet/nf-ont-metamap --input /path/to/a/folder/of/barcodes")
     exit 0
 }
 

@@ -11,20 +11,17 @@
             "description": "",
             "default": "",
             "properties": {
-                "run_name": {
-                    "type": "string",
-                    "default": "bart-1",
-                    "fa_icon": "fas fa-ad"
-                },
                 "email": {
                     "type": "string",
                     "default": "@quadram.ac.uk",
-                    "fa_icon": "fas fa-at"
+                    "fa_icon": "fas fa-at",
+                    "description": "Email to send notification to"
                 },
                 "input": {
                     "type": "string",
                     "default": "/bart",
-                    "fa_icon": "far fa-folder-open"
+                    "fa_icon": "far fa-folder-open",
+                    "description": "Must be an absolute path to a folder of either sub-folders or files starting having prefix name barcode"
                 },
                 "outdir": {
                     "type": "string",
