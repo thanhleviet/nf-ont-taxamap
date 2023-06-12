@@ -27,9 +27,10 @@ AMR
   --skip_amr        [boolean] Skip screening AMR
   --amr_db          [string]  Path to AMR database [default: None]
 ```
+## Input
+See [Input](docs/input.md)
 ## Database
 See [database](docs/database.md)
-
 ## Output
 See [Output](docs/output.md)
 
