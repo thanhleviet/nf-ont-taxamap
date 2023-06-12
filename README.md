@@ -1,6 +1,6 @@
 # ONT-Taxonomic-Profiling
 
-A simple Taxonomic profiling ONT reads using minimap2
+Taxonomic profiling ONT metagenomics reads using minimap2
 ## Usage
 ```
 nextflow run thanhleviet/ont-taxonomic-profiling --help
