@@ -15,7 +15,7 @@ xls_name <- args[2]
 # Define a function called "rr" that takes a file path as an argument
 rr <- function(x) {
   # Read the 7th line of the file at the given path, and then create a tibble with two columns: "sample" and "line"
-  read_lines(x)[7] %>%
+  read_lines(x)[8] %>%
     tibble(sample = basename(x) %>% str_remove(., ".flagstat"), line = .) %>%
     # Extract the number of human reads and human proportion from the "line" column, and add them as new columns
     mutate(human_reads = str_extract(line,"^[0-9]{1,10}")) %>%
