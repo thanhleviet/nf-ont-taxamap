@@ -301,7 +301,7 @@ process CREATE_EXCEL_REPORT {
     _this_run = new java.util.Date().format('yyyy-MM-dd_HH')
     // Sets the variable `run_name` to either the value of the `params.run_name` parameter,
     // or to the formatted date string if `params.run_name` is null or undefined
-    run_name = params.run_name ?: workflow.runName
+    run_name = workflow.runName
     """
         Rscript --vanilla ${projectDir}/bin/create_excel_report.R \$PWD "report_${run_name}"
     """
