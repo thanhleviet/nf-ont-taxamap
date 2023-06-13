@@ -18,7 +18,7 @@ process CONCATENATE {
 
     tag {sample_id}
 
-    conda './env/conda-env.yml'
+    conda projectDir + '/env/conda-env.yml'
 
     cpus 4
 
@@ -44,7 +44,7 @@ process DEHUMAN {
 
     tag {sample_id}
 
-    conda './env/conda-env.yml'
+    conda projectDir + '/env/conda-env.yml'
 
     cpus 32
 
@@ -70,7 +70,7 @@ process DEHUMAN {
 process FILTER_BY_LENGTH {
 
     tag {sample_id}
-    conda './env/conda-env.yml'
+    conda projectDir + '/env/conda-env.yml'
 
     cpus 4
 
@@ -98,7 +98,7 @@ process FILTER_BY_LENGTH {
 process DEHUMAN2 {
 
     tag {sample_id}
-    conda './env/conda-env.yml'
+    conda projectDir + '/env/conda-env.yml'
 
     cpus 6
 
@@ -131,7 +131,7 @@ process MINIMAP2_PAF {
 
     tag {sample_id}
 
-    conda './env/conda-env.yml'
+    conda projectDir + '/env/conda-env.yml'
 
     cpus 14
 
@@ -162,7 +162,7 @@ process AMR {
 
     tag {sample_id}
 
-    conda './env/conda-env.yml'
+    conda projectDir + '/env/conda-env.yml'
 
     cpus 32
 
@@ -264,7 +264,7 @@ process PARSING_PAF {
 
     tag {sample_id}
 
-    conda './env/conda-report.yml'
+    conda projectDir +  '/env/conda-report.yml'
 
     cpus 4
 
@@ -285,7 +285,8 @@ process PARSING_PAF {
 
 process CREATE_EXCEL_REPORT {
     publishDir "${params.outdir}", mode: "copy"
-    conda './env/conda-r.yml'
+
+    conda projectDir +  '/env/conda-r.yml'
 
     cpus 4
 
