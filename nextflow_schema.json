@@ -8,7 +8,7 @@
         "input_output_options": {
             "title": "Input/Output options",
             "type": "object",
-            "description": "",
+            "description": "Input and Output",
             "default": "",
             "properties": {
                 "email": {
@@ -31,11 +31,35 @@
                 }
             },
             "required": [
-                "run_name",
                 "email",
                 "input",
                 "outdir"
             ]
+        },
+        "filtering_reads_by_sequencing_time": {
+            "title": "Filtering reads by sequencing time",
+            "type": "object",
+            "description": "Extract reads by sequencing time",
+            "default": "",
+            "properties": {
+                "skip_filter_time": {
+                    "type": "boolean",
+                    "description": "Skip filtering by sequencing time ?",
+                    "default": true,
+                    "fa_icon": "far fa-check-circle"
+                },
+                "ontime_from": {
+                    "type": "string",
+                    "description": "Extract reads generated from...",
+                    "default": "0h"
+                },
+                "ontime_to": {
+                    "type": "string",
+                    "description": "Extract reads generated until...",
+                    "default": "1h"
+                }
+            },
+            "fa_icon": "fas fa-clock"
         },
         "pipeline_options": {
             "title": "Pipeline Options",
@@ -132,6 +156,9 @@
     "allOf": [
         {
             "$ref": "#/definitions/input_output_options"
+        },
+        {
+            "$ref": "#/definitions/filtering_reads_by_sequencing_time"
         },
         {
             "$ref": "#/definitions/pipeline_options"
