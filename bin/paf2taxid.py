@@ -75,7 +75,7 @@ def write_taxonomy_report(file_name, collection):
         with open(file_name, 'w') as _fh:
             # Write header to file
             _fh.write(
-                "taxid,count,read_length_sum,kingdom,phylum,class,order,family,genus,species,strain\n")
+                "taxid,count,read_length_sum,average_read_length,kingdom,phylum,class,order,family,genus,species,strain\n")
             # Write each taxonomic rank's count to file
             for line in collection:
                 _fh.write(f"{line}\n")
@@ -240,16 +240,18 @@ def main(min_read_length, score, paf_file, output=None):
             for k, _ in collection.items():
                 if collection[k]['taxid'] not in taxid_sum_dict.keys():
                     taxid_sum_dict[collection[k]['taxid']] = {"count": 1, "read_length_sum": int(collection[k]['read_length'])}
+                    taxid_sum_dict[collection[k]['taxid']]['average_read_length'] = taxid_sum_dict[collection[k]['taxid']]['read_length_sum'] / taxid_sum_dict[collection[k]['taxid']]['count']
                 else:
                     taxid_sum_dict[collection[k]['taxid']]['count'] += 1
                     taxid_sum_dict[collection[k]['taxid']]['read_length_sum'] += int(collection[k]['read_length'])
+                    taxid_sum_dict[collection[k]['taxid']]['average_read_length'] = taxid_sum_dict[collection[k]['taxid']]['read_length_sum'] / taxid_sum_dict[collection[k]['taxid']]['count']
+            print(taxid_sum_dict)
             taxid_sum_dict_sorted = {taxid: count for taxid, count in sorted(
                 taxid_sum_dict.items(), reverse=True, key=lambda item: item[1]['count'])}
-            # print(taxid_sum_dict_sorted)
             _sum_taxonomy = []
             _metaphlan_like = []
             for k, v in taxid_sum_dict_sorted.items():
-                _taxon_group = f"{k},{taxid_sum_dict_sorted[k]['count']},{taxid_sum_dict_sorted[k]['read_length_sum']}"
+                _taxon_group = f"{k},{taxid_sum_dict_sorted[k]['count']},{taxid_sum_dict_sorted[k]['read_length_sum']},{taxid_sum_dict_sorted[k]['average_read_length']}"
                 get_taxonomy = ",".join(print_metaphlan_like_report(k).values())
                 _sum_taxonomy.append(f"{_taxon_group},{get_taxonomy}")
 
