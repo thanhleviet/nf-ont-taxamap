@@ -109,7 +109,7 @@ process FILTER_BY_TIME {
 
     script:
     """
-    ontime -o ${sample_id}.ontime.fastq.gz --to ${params.first_time} ${reads}
+    ontime -o ${sample_id}.ontime.fastq.gz --from ${params.ontime_from} --to ${params.ontime_to} ${reads}
     """
 
     stub:
@@ -447,7 +447,8 @@ workflow.onComplete {
         email = monitor_email
     }
 
-    if (workflow.success) {
+    if (!params.no_run_stub) {
+        if (workflow.success) {
         def msg = """\
         Pipeline execution summary
         ---------------------------
@@ -474,4 +475,6 @@ workflow.onComplete {
             attach nextflow_log
             }
     }
+    }
+
 }
