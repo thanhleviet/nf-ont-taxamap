@@ -95,6 +95,30 @@ process FILTER_BY_LENGTH {
     """
 }
 
+process FILTER_BY_TIME {
+    tag {sample_id}
+
+    conda projectDir + '/env/conda-env.yml'
+
+    cpus 2
+
+    input:
+        tuple val(sample_id), path(reads)
+    output:
+        tuple val(sample_id), path("${sample_id}.ontime.fastq.gz"), emit: reads
+
+    script:
+    """
+    ontime -o ${sample_id}.ontime.fastq.gz --from ${params.ontime_from} --to ${params.ontime_to} ${reads}
+    """
+
+    stub:
+    """
+    ontime --help
+    touch ${sample_id}.ontime.fastq.gz
+    """
+}
+
 process DEHUMAN2 {
 
     tag {sample_id}
@@ -360,7 +384,14 @@ workflow {
         ch_reads = ch_input
     }
 
-    FILTER_BY_LENGTH(ch_reads)
+    if (!params.skip_filter_time) {
+        FILTER_BY_TIME(ch_reads)
+        ch_reads_filter_time = FILTER_BY_TIME.out.reads
+    } else {
+        ch_reads_filter_time = ch_reads
+    }
+
+    FILTER_BY_LENGTH(ch_reads_filter_time)
 
     ch_report = ch_report.mix(FILTER_BY_LENGTH.out.stats.map {it -> it[1]}).ifEmpty([])
 
@@ -416,7 +447,8 @@ workflow.onComplete {
         email = monitor_email
     }
 
-    if (workflow.success) {
+    if (!params.no_run_stub) {
+        if (workflow.success) {
         def msg = """\
         Pipeline execution summary
         ---------------------------
@@ -443,4 +475,6 @@ workflow.onComplete {
             attach nextflow_log
             }
     }
+    }
+
 }

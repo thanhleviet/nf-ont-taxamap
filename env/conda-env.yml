@@ -10,5 +10,6 @@ dependencies:
   - bioconda::nanoq
   - bioconda::kma>=1.4
   - bioconda::csvtk
+  - bioconda::ontime=0.1.3
   - conda-forge::pigz>=2.5
   - epi2melabs::fastcat
