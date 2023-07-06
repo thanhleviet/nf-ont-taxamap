@@ -1,15 +1,15 @@
 # ONT-Taxonomic-Profiling
 
-Taxonomic profiling ONT metagenomics reads using minimap2
+Taxonomic profiling ONT metagenomic reads using minimap2
 ## Usage
 ```
-nextflow run thanhleviet/nf-ont-metamap --help
+nextflow run thanhleviet/nf-ont-taxamap --help
 ```
 
 ```bash
 Typical pipeline command:
 
-  nextflow run thanhleviet/nf-ont-metamap --input /path/to/a/folder/of/barcodes
+  nextflow run thanhleviet/nf-ont-taxamap --input /path/to/a/folder/of/barcodes
 
 Input/Output options
   --email            [string]  Email to send notification to [default: @quadram.ac.uk]
